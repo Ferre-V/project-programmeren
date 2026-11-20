@@ -1,4 +1,4 @@
-staal = input("Geef vijf meetwaarden(gescheiden door een ;):")
+# Project wetenschappelijk programmeren - opdracht 1
 
 def controle_input(staal: str) -> bool:
     """
@@ -26,10 +26,10 @@ def controle_input(staal: str) -> bool:
             return False
         
         if waarde == "" or waarde == ".":
-                    return False 
+            return False 
         
         for kar in waarde:
-            if kar not in "0123456789. ":
+            if kar not in "0123456789.":
                 return False
 
         nieuwe_waarden.append(waarde)    
@@ -111,7 +111,7 @@ def bereken_WQI(WQI: int) -> str:
     WQI (int): De totale som van de strafpunten.
 
     Returns:
-    str: De waterkwaliteit is hoog, gemiddeld of slecht.
+    str: De kwaliteitsklasse ('hoog', 'gemiddeld' of 'slecht').
     """
 
     if WQI <= 2:
@@ -121,7 +121,9 @@ def bereken_WQI(WQI: int) -> str:
     else:
         return "slecht"
 
-while staal.lower() != "stop":
+
+staal = input("Geef vijf meetwaarden(gescheiden door een ;):")
+while staal.strip().lower() != "stop":
 
     if controle_input(staal):
         WQI = bereken_SP(staal)
