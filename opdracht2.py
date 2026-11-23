@@ -1,4 +1,51 @@
-# Project Wetenschappelijk Programmeren - Opdracht 2
+# Project wetenschappelijk programmeren - opdracht 2
+
+def verwerk_lege(waarde: str) -> float | None:
+    """
+    Zet een meetwaarde om naar een float, of naar None indien de waarde ontbreekt ('/').
+
+    Parameters
+    ----------
+    waarde : str
+        De onverwerkte string van 1 meetwaarde uit het bestand.
+
+    Returns
+    -------
+    float of None
+        De meetwaarde als float, of None wanneer de waarde '/' of leeg is.
+    """
+    proper = waarde.strip()
+
+    if proper == "/" or proper == "":
+        return None
+    
+    return float(proper)
+
+def verwerk_meting(meting: list[str]) -> dict:
+    """
+    Zet 1 gesplitste rij uit het bestand (meetgegevens.txt) om naar een dictionary van de meetwaarden.
+
+    Parameters
+    ----------
+    meting : list[str]
+        Een lijst met 6 strings: de string van de dag en die van de 5 meetwaarden.
+
+    Returns
+    -------
+    dict
+        Een dictionary met de sleutels 'dag', 'temp', 'ph', 'no3', 'po4' en 'o2'.
+    """
+    dag_nr = int(meting[0].replace("Dag", "").strip())
+
+    return {
+        "dag": dag_nr,
+        "temp": verwerk_lege(meting[1]),
+        "ph": verwerk_lege(meting[2]),
+        "no3": verwerk_lege(meting[3]),
+        "po4": verwerk_lege(meting[4]),
+        "o2": verwerk_lege(meting[5]),
+    }
+
 def lees_bestand(pad: str) -> dict:
     """
     Leest het bestand met meetgegevens in en groepeert de waarden per parameter in lijsten.
@@ -6,7 +53,7 @@ def lees_bestand(pad: str) -> dict:
     Parameters
     ----------
     pad : str
-        Het bestandspad naar het tekstbestand met meetgegevens.
+        Het pad naar het tekstbestand met meetgegevens.
 
     Returns
     -------
@@ -22,14 +69,14 @@ def lees_bestand(pad: str) -> dict:
         "o2": [],
     }
 
-    with open(pad, "r", encoding="utf-8") as f:  #encoding als extra veiligheid
+    with open(pad, "r") as f:
         rijen = f.readlines()
 
-    rijen.pop(0)  # 1ste rij met kolomheaders verwijderen
+    rijen.pop(0)  # 1ste rij met headers verwijderen
 
     for rij in rijen:
         rij = rij.strip()
-        if rij == "":        #Lege rijen skippen (extra veiligheid)
+        if rij == "":        # Lege rijen skippen (kan in principe niet, maar als extra veiligheid)
             continue
 
         onverwerkte_waarden = rij.split(";")
@@ -41,62 +88,9 @@ def lees_bestand(pad: str) -> dict:
     return resultaten
 
 
-
-def verwerk_lege(waarde: str) -> float | None:
-    """
-    Zet een meetwaarde om naar een float, of naar None indien de waarde ontbreekt ('/').
-
-    Parameters
-    ----------
-    waarde : str
-        De onverwerkte string van 1 meetwaarde uit het bestand.
-
-    Returns
-    -------
-    float | None
-        De meetwaarde als float, of None wanneer de waarde '/' of leeg is.
-    """
-    proper = waarde.strip()
-
-    if proper == "/" or proper == "":
-        return None
-    
-    return float(proper)
-
-
-def verwerk_meting(meting: list[str]) -> dict:
-    """
-    Verwerkt 1 reeds gesplitste rij uit het databestand tot een dictionary van de meetwaarden.
-
-    Parameters
-    ----------
-    meting : list[str]
-        Een lijst met 6 strings, nl. de string van de dag en die van de 5 meetwaarden.
-
-    Returns
-    -------
-    dict
-        Een dictionary met de sleutels 'dag', 'temp', 'ph', 'no3', 'po4' en 'o2'.
-    """
-
-    dag_nr = int(meting[0].replace("Dag", "").strip())
-
-    return {
-        "dag": dag_nr,
-        "temp": verwerk_lege(meting[1]),
-        "ph": verwerk_lege(meting[2]),
-        "no3": verwerk_lege(meting[3]),
-        "po4": verwerk_lege(meting[4]),
-        "o2": verwerk_lege(meting[5]),
-    }
-
-
-
-
-
 def bereken_wqi(temp: float, ph: float, no3: float, po4: float, o2: float) -> str:
     """
-    Berekent het aantal strafpunten op basis van de 5 parameters en bepaalt de waterkwaliteit.
+    Berekent het aantal strafpunten obv. de parameters en bepaalt de waterkwaliteit.
 
     Parameters
     ----------
@@ -171,17 +165,17 @@ def frequentietabel(meetgegevens: dict) -> dict:
     """
     aantallen = {"hoog": 0, "gemiddeld": 0, "slecht": 0}
 
-    for t, p, n, po, o in zip(  # zip om gelijktijdig over alle parameters te lopen
+    for temp, ph, no3, po4, o2 in zip(  # zip om gelijktijdig over alle parameters te lopen
         meetgegevens["temp"],
         meetgegevens["ph"],
         meetgegevens["no3"],
         meetgegevens["po4"],
         meetgegevens["o2"],
     ):
-        if None in (t, p, n, po, o):  # Wegfilteren van dagen met lege meetwaarden
+        if None in (temp, ph, no3, po4, o2):  # Wegfilteren van dagen met lege meetwaarden
             continue
 
-        kwaliteit = bereken_wqi(t, p, n, po, o)
+        kwaliteit = bereken_wqi(temp, ph, no3, po4, o2)
         aantallen[kwaliteit] += 1
 
     return aantallen
@@ -189,7 +183,7 @@ def frequentietabel(meetgegevens: dict) -> dict:
 
 def print_frequentietabel(aantallen: dict) -> None:
     """
-    Print een overzichtstabel van de waterkwaliteiten en hun aantallen naar de console.
+    Print een frequentietabel van de waterkwaliteiten en hun aantallen.
 
     Parameters
     ----------
@@ -231,7 +225,7 @@ def interpoleer_punt(x1: int, y1: float, x2: int, y2: float, x: int) -> float:
     Returns
     -------
     float
-        De lineair geïnterpoleerde meetwaarde op dag x.
+        De geïnterpoleerde meetwaarde op dag x.
     """
     return y1 + ((y2 - y1) / (x2 - x1)) * (x - x1)
 
@@ -245,7 +239,7 @@ def interpoleer_parameter(dagen: list[int], waarden: list[float | None]) -> list
     dagen : list[int]
         De lijst met opeenvolgende dagnummers.
     waarden : list[float | None]
-        De lijst met meetwaarden van één parameter, inclusief None voor ontbrekende metingen.
+        De lijst met meetwaarden van één parameter (float | None, want meetwaarden kunnen ontbreken)
 
     Returns
     -------
@@ -258,7 +252,7 @@ def interpoleer_parameter(dagen: list[int], waarden: list[float | None]) -> list
     for i in range(aantal):
         if geinterpoleerd[i] is None:
             l = i - 1  # Eerste punt links dat wel bestaat zoeken
-            while l >= 0 and waarden[l] is None:   #l >= 0 anders kan pointer negatief worden.
+            while l >= 0 and waarden[l] is None:   # l >= 0 anders kan pointer negatief worden.
                 l -= 1
 
             r = i + 1  # Zelfde maar aan rechterkant
@@ -275,6 +269,7 @@ def interpoleer_parameter(dagen: list[int], waarden: list[float | None]) -> list
                 geinterpoleerd[i] = interpoleer_punt(x1, y1, x2, y2, x)
 
     return geinterpoleerd 
+
 
 def interpoleer_meetwaarden(meetgegevens: dict) -> dict:
     """
@@ -301,7 +296,6 @@ def interpoleer_meetwaarden(meetgegevens: dict) -> dict:
 
 PAD_MEETGEGEVENS = "meetgegevens.txt"
 meetgegevens = lees_bestand(PAD_MEETGEGEVENS)
-print(meetgegevens)
 freq = frequentietabel(meetgegevens)
 print_frequentietabel(freq)
 

@@ -2,16 +2,18 @@
 
 def controle_input(staal: str) -> bool:
     """
-    Deze functie controleert of de invoer juiste karakters, lengte, scheiding 
-    en meetwaarden binnen het juiste bereik bevat.
+    Controleert of de input bestaat uit 5 geldige meetwaarden die binnen hun natuurlijk bereik liggen.
 
-    Parameters: 
-    staal (str): De ingevoerde meetwaarden (input).
+    Parameters
+    ----------
+    staal : str
+        De ingevoerde string met 5 meetwaarden gescheiden door ';'
 
-    Returns:
-    bool: True of False
+    Returns
+    -------
+    bool
+        True indien het staal geldig is, anders False.
     """
-
     waarden = staal.split(";")
 
     if len(waarden) != 5:
@@ -32,37 +34,41 @@ def controle_input(staal: str) -> bool:
             if kar not in "0123456789.":
                 return False
 
-        nieuwe_waarden.append(waarde)    
-    waarden = nieuwe_waarden       
-    temp = float(waarden[0])
-    pH = float(waarden[1])
-    nitraat = float(waarden[2])
-    fosfaat = float(waarden[3])
-    zuurstof = float(waarden[4])
+        nieuwe_waarden.append(waarde)   
 
-    if temp <= 0 or temp >= 50:
+    temp = float(nieuwe_waarden[0])
+    pH = float(nieuwe_waarden[1])
+    nitraat = float(nieuwe_waarden[2])
+    fosfaat = float(nieuwe_waarden[3])
+    zuurstof = float(nieuwe_waarden[4])
+
+    if temp < 0 or temp > 50:
         return False
     
-    if pH < 0 or pH >= 14:
+    if pH <= 0 or pH > 14:
         return False
     
-    if nitraat <= 0 or fosfaat <= 0 or zuurstof <= 0:
+    if nitraat < 0 or fosfaat < 0 or zuurstof < 0:
         return False
     
     else:
         return True   
 
-def bereken_strafpunten(staal:str) -> int:
-    """ 
-    Deze functie berekent de som van de strafpunten en wanneer een staal een strafpunt krijgt.
 
-    Parameters:
-    staal (str): De vijf meetwaarden gescheiden door puntkomma's (input).
-
-    Returns:
-    int: Het totaal aantal strafpunten van een staal, de WQI.
+def bereken_strafpunten(staal: str) -> int:
     """
+    Berekent de som van de strafpunten van een geldig waterstaal.
 
+    Parameters
+    ----------
+    staal : str
+        De vijf meetwaarden gescheiden door een ';'.
+
+    Returns
+    -------
+    int
+        Het totaal aantal strafpunten van een staal.
+    """
     waarden = staal.split(";")
 
     for i in range(len(waarden)):
@@ -103,17 +109,21 @@ def bereken_strafpunten(staal:str) -> int:
 
     return strafpunten
 
+
 def bereken_WQI(strafpunten: int) -> str:
-    """ 
-    Deze functie bepaalt de waterkwaliteit op basis van het aantal strafpunten.
-
-    Parameters:
-    strafpunten (int): De totale som van de strafpunten.
-
-    Returns:
-    str: De kwaliteitsklasse ('hoog', 'gemiddeld' of 'slecht').
     """
+    Bepaalt de waterkwaliteit aan de hand van het aantal strafpunten.
 
+    Parameters
+    ----------
+    strafpunten : int
+        De totale som van de strafpunten.
+
+    Returns
+    -------
+    str
+        De kwaliteitsklasse ('hoog', 'gemiddeld' of 'slecht').
+    """
     if strafpunten <= 2:
         return "hoog"
     elif strafpunten <= 5:
@@ -122,7 +132,7 @@ def bereken_WQI(strafpunten: int) -> str:
         return "slecht"
 
 
-staal = input("Geef vijf meetwaarden(gescheiden door een ;):")
+staal = input("Geef een staal: ")
 while staal.strip().lower() != "stop":
 
     if controle_input(staal):
@@ -133,5 +143,5 @@ while staal.strip().lower() != "stop":
     else:
         print("Ongeldige input")
 
-    staal = input("Geef vijf meetwaarden(gescheiden door een ;):")
-print("Programma stopt")            
+    staal = input("Geef een nieuw staal: ")
+print("Programma stopt")
