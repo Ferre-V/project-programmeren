@@ -52,7 +52,7 @@ def controle_input(staal: str) -> bool:
     else:
         return True   
 
-def bereken_SP(staal:str) -> int:
+def bereken_strafpunten(staal:str) -> int:
     """ 
     Deze functie berekent de som van de strafpunten en wanneer een staal een strafpunt krijgt.
 
@@ -103,20 +103,20 @@ def bereken_SP(staal:str) -> int:
 
     return strafpunten
 
-def bereken_WQI(WQI: int) -> str:
+def bereken_WQI(strafpunten: int) -> str:
     """ 
-    Deze functie bepaalt de waterkwaliteit op basis van de WQI.
+    Deze functie bepaalt de waterkwaliteit op basis van het aantal strafpunten.
 
     Parameters:
-    WQI (int): De totale som van de strafpunten.
+    strafpunten (int): De totale som van de strafpunten.
 
     Returns:
     str: De kwaliteitsklasse ('hoog', 'gemiddeld' of 'slecht').
     """
 
-    if WQI <= 2:
+    if strafpunten <= 2:
         return "hoog"
-    elif WQI <= 5:
+    elif strafpunten <= 5:
         return "gemiddeld"
     else:
         return "slecht"
@@ -126,8 +126,8 @@ staal = input("Geef vijf meetwaarden(gescheiden door een ;):")
 while staal.strip().lower() != "stop":
 
     if controle_input(staal):
-        WQI = bereken_SP(staal)
-        kwaliteit = bereken_WQI(WQI)
+        strafpunten = bereken_strafpunten(staal)
+        kwaliteit = bereken_WQI(strafpunten)
         print("WQI:", kwaliteit)
 
     else:
