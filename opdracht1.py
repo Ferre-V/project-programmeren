@@ -40,13 +40,13 @@ def controle_input(staal: str) -> bool:
     fosfaat = float(waarden[3])
     zuurstof = float(waarden[4])
 
-    if temp < 0 or temp > 50:
+    if temp <= 0 or temp >= 50:
         return False
     
-    if pH <= 0 or pH > 14:
+    if pH < 0 or pH >= 14:
         return False
     
-    if nitraat < 0 or fosfaat < 0 or zuurstof < 0:
+    if nitraat <= 0 or fosfaat <= 0 or zuurstof <= 0:
         return False
     
     else:
