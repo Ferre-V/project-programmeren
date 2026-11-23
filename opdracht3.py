@@ -104,34 +104,6 @@ def bereken_afstand(p1: tuple[float, float], p2: tuple[float, float]) -> float:
     dy = p2[1] - p1[1]
     return sqrt(dx**2 + dy**2)
 
-def check_bedrijven_gedekt(bedrijven: list[tuple[float, float]], sensor: tuple[float, float], radius: float) -> list[tuple[float, float]]:
-    """
-    Bepaalt welke bedrijven binnen het bereik van een sensor liggen.
-
-    Parameters
-    ----------
-    bedrijven : list[tuple[float, float]]
-        Een lijst met (x, y)-coördinaten van bedrijven.
-    sensor : tuple[float, float]
-        De (x, y)-coördinaten van de sensor.
-    radius : float
-        Het maximale bereik van de sensor.
-
-    Returns
-    -------
-    list[tuple[float, float]]
-        Een lijst met de coördinaten van alle gedekte bedrijven.
-    """
-    gedekt = []
-
-    for bedrijf in bedrijven:
-        afstand = bereken_afstand(bedrijf, sensor)
-
-        if afstand <= radius:
-            gedekt.append(bedrijf)
-
-    return gedekt
-
 
 def sensorLocaties(coordinaten: list[tuple[float, float]], radius:float = 10) -> list[tuple[float, float]]:
     """
@@ -171,6 +143,37 @@ def sensorLocaties(coordinaten: list[tuple[float, float]], radius:float = 10) ->
         ongedekt = [bedrijf for bedrijf in ongedekt if bedrijf not in meeste_gedekt]
 
     return sensoren
+
+def check_bedrijven_gedekt(bedrijven: list[tuple[float, float]], sensor: tuple[float, float], radius: float) -> list[tuple[float, float]]:
+    """
+    Bepaalt welke bedrijven binnen het bereik van een sensor liggen.
+
+    Parameters
+    ----------
+    bedrijven : list[tuple[float, float]]
+        Een lijst met (x, y)-coördinaten van bedrijven.
+    sensor : tuple[float, float]
+        De (x, y)-coördinaten van de sensor.
+    radius : float
+        Het maximale bereik van de sensor.
+
+    Returns
+    -------
+    list[tuple[float, float]]
+        Een lijst met de coördinaten van alle gedekte bedrijven.
+    """
+    gedekt = []
+
+    for bedrijf in bedrijven:
+        afstand = bereken_afstand(bedrijf, sensor)
+
+        if afstand <= radius:
+            gedekt.append(bedrijf)
+
+    return gedekt
+
+
+
 
 
 # Visualisatie van de sensoren en de bedrijven
