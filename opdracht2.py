@@ -1,4 +1,45 @@
 # Project Wetenschappelijk Programmeren - Opdracht 2
+def lees_bestand(pad: str) -> dict:
+    """
+    Leest het bestand met meetgegevens in en groepeert de waarden per parameter in lijsten.
+
+    Parameters
+    ----------
+    pad : str
+        Het bestandspad naar het tekstbestand met meetgegevens.
+
+    Returns
+    -------
+    dict
+        Een dictionary waarin elke parameter verwijst naar een lijst van meetwaarden over alle dagen.
+    """
+    resultaten = {
+        "dag": [],
+        "temp": [],
+        "ph": [],
+        "no3": [],
+        "po4": [],
+        "o2": [],
+    }
+
+    with open(pad, "r", encoding="utf-8") as f:  #encoding als extra veiligheid
+        rijen = f.readlines()
+
+    rijen.pop(0)  # 1ste rij met kolomheaders verwijderen
+
+    for rij in rijen:
+        rij = rij.strip()
+        if rij == "":        #Lege rijen skippen (extra veiligheid)
+            continue
+
+        onverwerkte_waarden = rij.split(";")
+        verwerkte_meting = verwerk_meting(onverwerkte_waarden)
+
+        for param in resultaten:
+            resultaten[param].append(verwerkte_meting[param])
+
+    return resultaten
+
 
 
 def verwerk_lege(waarde: str) -> float | None:
@@ -50,46 +91,7 @@ def verwerk_meting(meting: list[str]) -> dict:
     }
 
 
-def lees_bestand(pad: str) -> dict:
-    """
-    Leest het bestand met meetgegevens in en groepeert de waarden per parameter in lijsten.
 
-    Parameters
-    ----------
-    pad : str
-        Het bestandspad naar het tekstbestand met meetgegevens.
-
-    Returns
-    -------
-    dict
-        Een dictionary waarin elke parameter verwijst naar een lijst van meetwaarden over alle dagen.
-    """
-    resultaten = {
-        "dag": [],
-        "temp": [],
-        "ph": [],
-        "no3": [],
-        "po4": [],
-        "o2": [],
-    }
-
-    with open(pad, "r", encoding="utf-8") as f:  #encoding als extra veiligheid
-        rijen = f.readlines()
-
-    rijen.pop(0)  # 1ste rij met kolomheaders verwijderen
-
-    for rij in rijen:
-        rij = rij.strip()
-        if rij == "":        #Lege rijen skippen (extra veiligheid)
-            continue
-
-        onverwerkte_waarden = rij.split(";")
-        verwerkte_meting = verwerk_meting(onverwerkte_waarden)
-
-        for param in resultaten:
-            resultaten[param].append(verwerkte_meting[param])
-
-    return resultaten
 
 
 def bereken_wqi(temp: float, ph: float, no3: float, po4: float, o2: float) -> str:
@@ -299,6 +301,7 @@ def interpoleer_meetwaarden(meetgegevens: dict) -> dict:
 
 PAD_MEETGEGEVENS = "meetgegevens.txt"
 meetgegevens = lees_bestand(PAD_MEETGEGEVENS)
+print(meetgegevens)
 freq = frequentietabel(meetgegevens)
 print_frequentietabel(freq)
 
